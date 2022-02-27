@@ -1,16 +1,11 @@
-from email import message
 from tkinter import *
 import socket
 import threading
 from tkinter import messagebox
 
 
-from matplotlib.pyplot import fill, title
-
-
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 serverAddr=((socket.gethostname(),9999))
-
 
 class APP:
     def __init__(self):
