@@ -1,4 +1,5 @@
 import mysql.connector as mysql
+from datetime import datetime
 
 mydb = mysql.connect(
   host="localhost",
@@ -9,9 +10,16 @@ mydb = mysql.connect(
 
 
 cur = mydb.cursor()
-cur.execute("SELECT * FROM users")
-r = cur.fetchall()
-print(r)
+
+def storeMessaage(username,message):
+    sql = f"INSERT INTO chatLog (username,date,message) VALUES('{username}','{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}','{message}')"
+    cur.execute(sql)
+    mydb.commit()
+def getMessage():
+    cur.execute("SELECT * FROM chatLog")
+    r = cur.fetchall()
+    return r
+
 
 
 

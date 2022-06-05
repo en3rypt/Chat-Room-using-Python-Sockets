@@ -45,6 +45,7 @@ class APP:
 
         self.scrollbar = Scrollbar(self.frame)
         self.scrollbar.pack(side='right',fill='y')
+        
 
         self.scrollbar.config(command=self.textbox.yview)
         self.textbox.config(yscrollcommand=self.scrollbar.set)
@@ -148,8 +149,12 @@ class APP:
     def logout(self):
         s.sendto(f'exit:{self.name.get()} Left the chat'.encode(),serverAddr)
         self.root.destroy()
+
+
     def send_message(self):
-        s.sendto(f'send:{self.msg.get()}'.encode(),serverAddr)
+        message = self.msg.get()
+        s.sendto(f'send:{message}'.encode(),serverAddr)
+        storeMessaage(self.username.get(),message)
         self.input_left.delete(0,END)
             
     def get_message(self):
@@ -158,7 +163,6 @@ class APP:
             try:
                 s.settimeout(None)
                 reply,cIp=s.recvfrom(1024)
-
                 self.textbox.config(state=NORMAL)
                 self.textbox.insert(END,reply.decode()+'\n')
                 self.textbox.config(state=DISABLED)
@@ -175,19 +179,31 @@ class APP:
         else:
             if validate_login(username,password):
                 try:
-                    if username:
-                        s.sendto(f'login:{username}'.encode(),serverAddr)
-                        s.settimeout(2)
-                        self.login.pack_forget()
-                        self.mainpage.pack(fill='both',expand=True)
-                        get_message = threading.Thread(target=self.get_message)
-                        get_message.start()
-                        self.l1.config(text=username)
-                        self.root.title(f'Chatroom:{username}')
-                        self.root.eval('tk::PlaceWindow . center')
+                    
+                    s.sendto(f'login:{username}'.encode(),serverAddr)
+                    s.settimeout(2)
+                    self.login.pack_forget()
+                    self.mainpage.pack(fill='both',expand=True)
+                    get_message = threading.Thread(target=self.get_message)
+                    get_message.start()
+                    self.l1.config(text=username)
+                    self.root.title(f'Chatroom:{username}')
+                    self.textbox.config(state=NORMAL)
+                    for i in getMessage():
+                        us = i[1]
+                        # print(username,i[1])
+                        if i[1] == username:
+                            sql = f"[You]-[{i[2].strftime('%Y-%m-%d %H:%M:%S')}]: {i[3]}"
+                        else:
+                            sql = f"[{i[1]}]-[{i[2].strftime('%Y-%m-%d %H:%M:%S')}]: {i[3]}"
+
+                        # self.textbox.insert(END,i)
                         
-                    else:
-                        messagebox.showinfo('Error','Enter your name to continue') 
+                        self.textbox.insert(END,sql+'\n')
+                    self.textbox.config(state=DISABLED)
+                    self.root.eval('tk::PlaceWindow . center')
+                        
+                    
                     
                 except socket.timeout:
                     messagebox.showinfo('Error','Connection timed out\nServer Down')
@@ -201,3 +217,10 @@ class APP:
    
 
 client = APP()
+
+
+
+"""
+values = set(map(lambda x:x[1], mylist))
+newlist = [[y[0] for y in mylist if y[1]==x] for x in values]
+"""
