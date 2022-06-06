@@ -3,6 +3,7 @@ import socket
 import threading
 from tkinter import messagebox
 from db import *
+import sys
 
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 serverAddr=((socket.gethostname(),9999))
@@ -26,9 +27,6 @@ class APP:
         self.enter_button.pack()
         self.enter_button = Button(self.main_page,text="Register",font=("Helvetica",12),command=self.register_user)
         self.enter_button.pack()
-        
-
-
 
         self.mainpage = Frame(self.root)
         
@@ -149,6 +147,7 @@ class APP:
     def logout(self):
         s.sendto(f'exit:{self.name.get()} Left the chat'.encode(),serverAddr)
         self.root.destroy()
+        sys.exit()
 
 
     def send_message(self):
@@ -179,7 +178,6 @@ class APP:
         else:
             if validate_login(username,password):
                 try:
-                    
                     s.sendto(f'login:{username}'.encode(),serverAddr)
                     s.settimeout(2)
                     self.login.pack_forget()
@@ -189,17 +187,21 @@ class APP:
                     self.l1.config(text=username)
                     self.root.title(f'Chatroom:{username}')
                     self.textbox.config(state=NORMAL)
-                    for i in getMessage():
-                        us = i[1]
-                        # print(username,i[1])
-                        if i[1] == username:
-                            sql = f"[You]-[{i[2].strftime('%Y-%m-%d %H:%M:%S')}]: {i[3]}"
-                        else:
-                            sql = f"[{i[1]}]-[{i[2].strftime('%Y-%m-%d %H:%M:%S')}]: {i[3]}"
+                    messages = getMessage()
+                    values = set([x.strftime('%Y-%m-%d') for x in map(lambda x:x[2], messages)])
+                    newlist = [[y for y in messages if y[2].strftime('%Y-%m-%d')==x] for x in values]
 
-                        # self.textbox.insert(END,i)
-                        
-                        self.textbox.insert(END,sql+'\n')
+                    for i in newlist[::-1]:
+                        date = i[0][2].strftime('%Y-%m-%d')
+                        self.textbox.insert(END,f'{date}\n')
+                        for j in i:
+                            us = j[1]
+                            if j[1] == username:
+                                sql = f"[You]-[{j[2].strftime('%H:%M:%S')}]: {j[3]}"
+                            else:
+                                sql = f"[{j[1]}]-[{j[2].strftime('%H:%M:%S')}]: {j[3]}"
+                            self.textbox.insert(END,sql+'\n')
+                        self.textbox.insert(END,'\n')
                     self.textbox.config(state=DISABLED)
                     self.root.eval('tk::PlaceWindow . center')
                         
@@ -217,10 +219,3 @@ class APP:
    
 
 client = APP()
-
-
-
-"""
-values = set(map(lambda x:x[1], mylist))
-newlist = [[y[0] for y in mylist if y[1]==x] for x in values]
-"""

@@ -21,8 +21,6 @@ def getMessage():
     return r
 
 
-
-
 def check_username(username):
     cur.execute("SELECT * FROM users WHERE username = '" + username + "'")
     r = cur.fetchall()
