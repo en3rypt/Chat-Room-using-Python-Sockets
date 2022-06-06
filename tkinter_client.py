@@ -64,7 +64,6 @@ class APP:
 
         #LOGIN USER
         self.login = Frame(self.root)
-        # self.login.pack(fill='both',expand=True)
 
         self.welcome_label3 = Label(self.login,text="Login",font=("Helvetica",16))
         self.welcome_label3.pack(pady=10)
@@ -205,8 +204,6 @@ class APP:
                     self.textbox.config(state=DISABLED)
                     self.root.eval('tk::PlaceWindow . center')
                         
-                    
-                    
                 except socket.timeout:
                     messagebox.showinfo('Error','Connection timed out\nServer Down')
                     self.root.destroy()

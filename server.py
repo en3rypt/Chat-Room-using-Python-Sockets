@@ -31,7 +31,7 @@ def handle_client():
                 else:
                     s.sendto(bytes(f'[You]:{msg}','utf-8'),ip)
         elif choice == 'exit':
-            print(ips)
+            
             del ips[cIp]
             print(ips)
             for ip in ips:
