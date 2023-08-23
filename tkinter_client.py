@@ -77,7 +77,7 @@ class APP:
         self.lpwdlabel = Label(self.login,text="Enter your password: ",font=("Helvetica",12))
         self.lpwdlabel.pack()
 
-        self.lpwdentry = Entry(self.login,textvariable=self.password,font=("Helvetica",12))
+        self.lpwdentry = Entry(self.login,show="*",textvariable=self.password,font=("Helvetica",12))
         self.lpwdentry.pack()
 
         self.lsubmit_button = Button(self.login,text="Submit",font=("Helvetica",12),command=self.validate_login)
@@ -103,7 +103,7 @@ class APP:
         self.rpwdlabel = Label(self.register,text="Enter your password: ",font=("Helvetica",12))
         self.rpwdlabel.pack()
 
-        self.rpwdentry = Entry(self.register,textvariable=self.password,font=("Helvetica",12))
+        self.rpwdentry = Entry(self.register,show="*",textvariable=self.password,font=("Helvetica",12))
         self.rpwdentry.pack()
 
         self.submit_button = Button(self.register,text="Submit",font=("Helvetica",12),command=self.validate_register)
